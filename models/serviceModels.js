@@ -1,35 +1,23 @@
-const db = require('./db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const ClaseEntrenador = {
-  getAll: (callback) => {
-    db.query('SELECT * FROM clase_entrenador', callback);
+const ClaseEntrenador = sequelize.define('ClaseEntrenador', {
+  clase_entrenador_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-
-  getById: (id, callback) => {
-    db.query('SELECT * FROM clase_entrenador WHERE clase_entrenador_id = ?', [id], callback);
+  clase_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
-
-  create: (relation, callback) => {
-    const { clase_id, entrenador_id } = relation;
-    db.query(
-      'INSERT INTO clase_entrenador (clase_id, entrenador_id) VALUES (?, ?)',
-      [clase_id, entrenador_id],
-      callback
-    );
+  entrenador_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
-
-  update: (id, relation, callback) => {
-    const { clase_id, entrenador_id } = relation;
-    db.query(
-      'UPDATE clase_entrenador SET clase_id = ?, entrenador_id = ? WHERE clase_entrenador_id = ?',
-      [clase_id, entrenador_id, id],
-      callback
-    );
-  },
-
-  delete: (id, callback) => {
-    db.query('DELETE FROM clase_entrenador WHERE clase_entrenador_id = ?', [id], callback);
-  }
-};
+}, {
+  tableName: 'clase_entrenador',
+  timestamps: false,
+});
 
 module.exports = ClaseEntrenador;

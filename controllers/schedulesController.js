@@ -1,51 +1,60 @@
 const Horario = require('../models/schedulesModels');
 
-exports.getAllHorarios = (req, res) => {
-  Horario.getAll((err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-};
-
-exports.getHorarioById = (req, res) => {
-  Horario.getById(req.params.id, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (result.length === 0) return res.status(404).json({ message: 'Horario no encontrado' });
-    res.json(result[0]);
-  });
-};
-
-exports.createHorario = (req, res) => {
-  const horario = req.body;
-  const { clase_id, dia_semana, hora_inicio, hora_fin } = horario;
-
-  if (!clase_id || !dia_semana || !hora_inicio || !hora_fin) {
-    return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+exports.getAll = async (req, res) => {
+  try {
+    const horarios = await Horario.findAll();
+    res.json(horarios);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
+};
 
-  // Validar que dia_semana esté dentro del ENUM permitido
-  const diasValidos = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-  if (!diasValidos.includes(dia_semana)) {
-    return res.status(400).json({ error: 'Día de la semana inválido' });
+exports.getById = async (req, res) => {
+  try {
+    const horario = await Horario.findByPk(req.params.id);
+    if (horario) {
+      res.json(horario);
+    } else {
+      res.status(404).json({ message: 'Horario no encontrado' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  Horario.create(horario, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ message: 'Horario creado correctamente', horarioId: result.insertId });
-  });
 };
 
-exports.updateHorario = (req, res) => {
-  const horario = req.body;
-  Horario.update(req.params.id, horario, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Horario actualizado correctamente' });
-  });
+exports.create = async (req, res) => {
+  try {
+    const nuevoHorario = await Horario.create(req.body);
+    res.status(201).json(nuevoHorario);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-exports.deleteHorario = (req, res) => {
-  Horario.delete(req.params.id, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Horario eliminado correctamente' });
-  });
+exports.update = async (req, res) => {
+  try {
+    const horario = await Horario.findByPk(req.params.id);
+    if (horario) {
+      await horario.update(req.body);
+      res.json(horario);
+    } else {
+      res.status(404).json({ message: 'Horario no encontrado' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const horario = await Horario.findByPk(req.params.id);
+    if (horario) {
+      await horario.destroy();
+      res.json({ message: 'Horario eliminado' });
+    } else {
+      res.status(404).json({ message: 'Horario no encontrado' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

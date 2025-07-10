@@ -1,43 +1,65 @@
 const ClaseEntrenador = require('../models/serviceModels');
 
-exports.getAllRelations = (req, res) => {
-  ClaseEntrenador.getAll((err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-};
-
-exports.getRelationById = (req, res) => {
-  ClaseEntrenador.getById(req.params.id, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (result.length === 0) return res.status(404).json({ message: 'Relación no encontrada' });
-    res.json(result[0]);
-  });
-};
-
-exports.createRelation = (req, res) => {
-  const { clase_id, entrenador_id } = req.body;
-  if (!clase_id || !entrenador_id) {
-    return res.status(400).json({ error: 'clase_id y entrenador_id son obligatorios' });
+exports.getAllRelations = async (req, res) => {
+  try {
+    const relaciones = await ClaseEntrenador.findAll();
+    res.json(relaciones);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  ClaseEntrenador.create({ clase_id, entrenador_id }, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ message: 'Relación creada correctamente', id: result.insertId });
-  });
 };
 
-exports.updateRelation = (req, res) => {
-  const { clase_id, entrenador_id } = req.body;
-  ClaseEntrenador.update(req.params.id, { clase_id, entrenador_id }, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Relación actualizada correctamente' });
-  });
+exports.getRelationById = async (req, res) => {
+  try {
+    const relacion = await ClaseEntrenador.findByPk(req.params.id);
+    if (relacion) {
+      res.json(relacion);
+    } else {
+      res.status(404).json({ message: 'Relación no encontrada' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-exports.deleteRelation = (req, res) => {
-  ClaseEntrenador.delete(req.params.id, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Relación eliminada correctamente' });
-  });
+exports.createRelation = async (req, res) => {
+  try {
+    const { clase_id, entrenador_id } = req.body;
+    if (!clase_id || !entrenador_id) {
+      return res.status(400).json({ error: 'clase_id y entrenador_id son obligatorios' });
+    }
+
+    const nuevaRelacion = await ClaseEntrenador.create({ clase_id, entrenador_id });
+    res.status(201).json(nuevaRelacion);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.updateRelation = async (req, res) => {
+  try {
+    const relacion = await ClaseEntrenador.findByPk(req.params.id);
+    if (relacion) {
+      await relacion.update(req.body);
+      res.json(relacion);
+    } else {
+      res.status(404).json({ message: 'Relación no encontrada' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteRelation = async (req, res) => {
+  try {
+    const relacion = await ClaseEntrenador.findByPk(req.params.id);
+    if (relacion) {
+      await relacion.destroy();
+      res.json({ message: 'Relación eliminada correctamente' });
+    } else {
+      res.status(404).json({ message: 'Relación no encontrada' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

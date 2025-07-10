@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const membresiaController = require('../controllers/memberControlller');
 
-router.get('/', membresiaController.getAllMembresias);
-router.get('/:id', membresiaController.getMembresiaById);
-router.post('/', membresiaController.createMembresia);
-router.put('/:id', membresiaController.updateMembresia);
-router.delete('/:id', membresiaController.deleteMembresia);
+router.get('/', membresiaController.getAll);
+router.get('/:id', membresiaController.getById);
+router.post('/', membresiaController.create);
+router.put('/:id', membresiaController.update);
+router.delete('/:id', membresiaController.delete);
 
 module.exports = router;

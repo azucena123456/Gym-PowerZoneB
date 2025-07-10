@@ -8,6 +8,16 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
+const sequelize = require('./config/db');
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Conexión a la base de datos establecida correctamente.');
+  } catch (error) {
+    console.error('No se pudo conectar a la base de datos:', error);
+  }
+})();
+
 // Rutas
 app.use('/api/clases', require('./routes/clasesRoutes'));
 app.use('/api/entrenadores', require('./routes/coatchRoutes'));
@@ -29,6 +39,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Error interno del servidor' });
 });
 
+// Inicio del servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

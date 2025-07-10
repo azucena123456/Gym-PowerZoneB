@@ -1,35 +1,29 @@
-const db = require('./db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const Clase = {
-  getAll: (callback) => {
-    db.query('SELECT * FROM clase', callback);
+const Clase = sequelize.define('Clase', {
+  clase_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-
-  getById: (id, callback) => {
-    db.query('SELECT * FROM clase WHERE clase_id = ?', [id], callback);
+  nombre_clase: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
   },
-
-  create: (clase, callback) => {
-    const { nombre_clase, descripcion, precio_clase, imagen_url } = clase;
-    db.query(
-      'INSERT INTO clase (nombre_clase, descripcion, precio_clase, imagen_url) VALUES (?, ?, ?, ?)',
-      [nombre_clase, descripcion, precio_clase, imagen_url],
-      callback
-    );
+  descripcion: {
+    type: DataTypes.TEXT,
   },
-
-  update: (id, clase, callback) => {
-    const { nombre_clase, descripcion, precio_clase, imagen_url } = clase;
-    db.query(
-      'UPDATE clase SET nombre_clase = ?, descripcion = ?, precio_clase = ?, imagen_url = ? WHERE clase_id = ?',
-      [nombre_clase, descripcion, precio_clase, imagen_url, id],
-      callback
-    );
+  precio_clase: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
   },
-
-  delete: (id, callback) => {
-    db.query('DELETE FROM clase WHERE clase_id = ?', [id], callback);
-  }
-};
+  imagen_url: {
+    type: DataTypes.STRING(255),
+  },
+}, {
+  tableName: 'clase',
+  timestamps: false,  // Si no usas createdAt/updatedAt
+});
 
 module.exports = Clase;

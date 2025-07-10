@@ -1,45 +1,60 @@
 const Membresia = require('../models/memberModels');
 
-exports.getAllMembresias = (req, res) => {
-  Membresia.getAll((err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-};
-
-exports.getMembresiaById = (req, res) => {
-  Membresia.getById(req.params.id, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (result.length === 0) return res.status(404).json({ message: 'Membresía no encontrada' });
-    res.json(result[0]);
-  });
-};
-
-exports.createMembresia = (req, res) => {
-  const membresia = req.body;
-  const { tipo, precio_membresia, fecha_expiracion } = membresia;
-
-  if (!tipo || precio_membresia == null || !fecha_expiracion) {
-    return res.status(400).json({ error: 'Tipo, precio y fecha de expiración son obligatorios' });
+exports.getAll = async (req, res) => {
+  try {
+    const membresias = await Membresia.findAll();
+    res.json(membresias);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-
-  Membresia.create(membresia, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.status(201).json({ message: 'Membresía creada correctamente', membresiaId: result.insertId });
-  });
 };
 
-exports.updateMembresia = (req, res) => {
-  const membresia = req.body;
-  Membresia.update(req.params.id, membresia, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Membresía actualizada correctamente' });
-  });
+exports.getById = async (req, res) => {
+  try {
+    const membresia = await Membresia.findByPk(req.params.id);
+    if (membresia) {
+      res.json(membresia);
+    } else {
+      res.status(404).json({ message: 'Membresía no encontrada' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-exports.deleteMembresia = (req, res) => {
-  Membresia.delete(req.params.id, (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ message: 'Membresía eliminada correctamente' });
-  });
+exports.create = async (req, res) => {
+  try {
+    const nuevaMembresia = await Membresia.create(req.body);
+    res.status(201).json(nuevaMembresia);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.update = async (req, res) => {
+  try {
+    const membresia = await Membresia.findByPk(req.params.id);
+    if (membresia) {
+      await membresia.update(req.body);
+      res.json(membresia);
+    } else {
+      res.status(404).json({ message: 'Membresía no encontrada' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.delete = async (req, res) => {
+  try {
+    const membresia = await Membresia.findByPk(req.params.id);
+    if (membresia) {
+      await membresia.destroy();
+      res.json({ message: 'Membresía eliminada' });
+    } else {
+      res.status(404).json({ message: 'Membresía no encontrada' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };

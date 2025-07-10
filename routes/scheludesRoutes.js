@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const horarioController = require('../controllers/schedulesController');
 
-router.get('/', horarioController.getAllHorarios);
-router.get('/:id', horarioController.getHorarioById);
-router.post('/', horarioController.createHorario);
-router.put('/:id', horarioController.updateHorario);
-router.delete('/:id', horarioController.deleteHorario);
+router.get('/', horarioController.getAll);
+router.get('/:id', horarioController.getById);
+router.post('/', horarioController.create);
+router.put('/:id', horarioController.update);
+router.delete('/:id', horarioController.delete);
 
 module.exports = router;

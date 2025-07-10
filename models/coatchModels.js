@@ -1,35 +1,28 @@
-const db = require('./db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const Entrenador = {
-  getAll: (callback) => {
-    db.query('SELECT * FROM entrenador', callback);
+const Entrenador = sequelize.define('Entrenador', {
+  entrenador_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-
-  getById: (id, callback) => {
-    db.query('SELECT * FROM entrenador WHERE entrenador_id = ?', [id], callback);
+  nombre_entrenador: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
   },
-
-  create: (entrenador, callback) => {
-    const { nombre_entrenador, especialidad, foto_url, contacto_entrenador } = entrenador;
-    db.query(
-      'INSERT INTO entrenador (nombre_entrenador, especialidad, foto_url, contacto_entrenador) VALUES (?, ?, ?, ?)',
-      [nombre_entrenador, especialidad, foto_url, contacto_entrenador],
-      callback
-    );
+  especialidad: {
+    type: DataTypes.STRING(100),
   },
-
-  update: (id, entrenador, callback) => {
-    const { nombre_entrenador, especialidad, foto_url, contacto_entrenador } = entrenador;
-    db.query(
-      'UPDATE entrenador SET nombre_entrenador = ?, especialidad = ?, foto_url = ?, contacto_entrenador = ? WHERE entrenador_id = ?',
-      [nombre_entrenador, especialidad, foto_url, contacto_entrenador, id],
-      callback
-    );
+  foto_url: {
+    type: DataTypes.STRING(255),
   },
-
-  delete: (id, callback) => {
-    db.query('DELETE FROM entrenador WHERE entrenador_id = ?', [id], callback);
-  }
-};
+  contacto_entrenador: {
+    type: DataTypes.STRING(100),
+  },
+}, {
+  tableName: 'entrenador',
+  timestamps: false,  // Desactiva createdAt / updatedAt
+});
 
 module.exports = Entrenador;

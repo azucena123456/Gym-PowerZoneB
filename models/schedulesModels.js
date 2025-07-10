@@ -1,35 +1,31 @@
-const db = require('./db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const Horario = {
-  getAll: (callback) => {
-    db.query('SELECT * FROM horario', callback);
+const Horario = sequelize.define('Horario', {
+  horario_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-
-  getById: (id, callback) => {
-    db.query('SELECT * FROM horario WHERE horario_id = ?', [id], callback);
+  clase_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
-
-  create: (horario, callback) => {
-    const { clase_id, dia_semana, hora_inicio, hora_fin } = horario;
-    db.query(
-      'INSERT INTO horario (clase_id, dia_semana, hora_inicio, hora_fin) VALUES (?, ?, ?, ?)',
-      [clase_id, dia_semana, hora_inicio, hora_fin],
-      callback
-    );
+  dia_semana: {
+    type: DataTypes.ENUM('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'),
+    allowNull: false,
   },
-
-  update: (id, horario, callback) => {
-    const { clase_id, dia_semana, hora_inicio, hora_fin } = horario;
-    db.query(
-      'UPDATE horario SET clase_id = ?, dia_semana = ?, hora_inicio = ?, hora_fin = ? WHERE horario_id = ?',
-      [clase_id, dia_semana, hora_inicio, hora_fin, id],
-      callback
-    );
+  hora_inicio: {
+    type: DataTypes.TIME,
+    allowNull: false,
   },
-
-  delete: (id, callback) => {
-    db.query('DELETE FROM horario WHERE horario_id = ?', [id], callback);
-  }
-};
+  hora_fin: {
+    type: DataTypes.TIME,
+    allowNull: false,
+  },
+}, {
+  tableName: 'horario',
+  timestamps: false,
+});
 
 module.exports = Horario;

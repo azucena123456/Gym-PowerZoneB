@@ -1,35 +1,27 @@
-const db = require('./db');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
 
-const Leads = {
-  getAll: (callback) => {
-    db.query('SELECT * FROM leads', callback);
+const Leads = sequelize.define('Leads', {
+  leads_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
   },
-
-  getById: (id, callback) => {
-    db.query('SELECT * FROM leads WHERE leads_id = ?', [id], callback);
+  nombre_autor: {
+    type: DataTypes.STRING(100),
+    allowNull: false,
   },
-
-  create: (lead, callback) => {
-    const { nombre_autor, mensaje, fecha_envio } = lead;
-    db.query(
-      'INSERT INTO leads (nombre_autor, mensaje, fecha_envio) VALUES (?, ?, ?)',
-      [nombre_autor, mensaje, fecha_envio],
-      callback
-    );
+  mensaje: {
+    type: DataTypes.TEXT,
+    allowNull: false,
   },
-
-  update: (id, lead, callback) => {
-    const { nombre_autor, mensaje, fecha_envio } = lead;
-    db.query(
-      'UPDATE leads SET nombre_autor = ?, mensaje = ?, fecha_envio = ? WHERE leads_id = ?',
-      [nombre_autor, mensaje, fecha_envio, id],
-      callback
-    );
+  fecha_envio: {
+    type: DataTypes.DATEONLY,
+    allowNull: false,
   },
-
-  delete: (id, callback) => {
-    db.query('DELETE FROM leads WHERE leads_id = ?', [id], callback);
-  }
-};
+}, {
+  tableName: 'leads',
+  timestamps: false,  // Desactiva createdAt/updatedAt
+});
 
 module.exports = Leads;
