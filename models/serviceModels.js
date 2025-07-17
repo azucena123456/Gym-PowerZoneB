@@ -1,23 +1,24 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const ClaseEntrenador = sequelize.define('ClaseEntrenador', {
+const Clase = require('./clasesModel');
+const Entrenador = require('./coatchModels');
+
+const Servicio = sequelize.define('Servicio', {
   clase_entrenador_id: {
     type: DataTypes.INTEGER,
-    autoIncrement: true,
     primaryKey: true,
+    autoIncrement: true
   },
-  clase_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  entrenador_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  clase_id: DataTypes.INTEGER,
+  entrenador_id: DataTypes.INTEGER
 }, {
   tableName: 'clase_entrenador',
-  timestamps: false,
+  timestamps: false
 });
 
-module.exports = ClaseEntrenador;
+// Relaciones
+Servicio.belongsTo(Clase, { foreignKey: 'clase_id' });
+Servicio.belongsTo(Entrenador, { foreignKey: 'entrenador_id' });
+
+module.exports = Servicio;

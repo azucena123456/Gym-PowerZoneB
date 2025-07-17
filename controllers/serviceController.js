@@ -1,65 +1,107 @@
-const ClaseEntrenador = require('../models/serviceModels');
+const Servicio = require('../models/serviceModels');
+const Clase = require('../models/clasesModel');
+const Entrenador = require('../models/coatchModels');
 
-exports.getAllRelations = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
-    const relaciones = await ClaseEntrenador.findAll();
-    res.json(relaciones);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const servicios = await Servicio.findAll({
+      include: [
+        {
+          model: Clase,
+          as: 'Clase',
+          attributes: ['nombre_clase', 'descripcion', 'precio_clase', 'imagen_url']
+        },
+        {
+          model: Entrenador,
+          as: 'Entrenador',
+          attributes: ['nombre_entrenador']
+        }
+      ]
+    });
+
+    const formatted = servicios.map(s => ({
+      servicio_id: s.clase_entrenador_id,
+      clase_id: s.clase_id,
+      entrenador_id: s.entrenador_id,
+      nombre_clase: s.Clase?.nombre_clase,
+      descripcion: s.Clase?.descripcion,
+      precio: s.Clase?.precio_clase,
+      imagen_url: s.Clase?.imagen_url,
+      nombre_entrenador: s.Entrenador?.nombre_entrenador
+    }));
+
+    res.json(formatted);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los servicios', error });
   }
 };
 
-exports.getRelationById = async (req, res) => {
+exports.getById = async (req, res) => {
   try {
-    const relacion = await ClaseEntrenador.findByPk(req.params.id);
-    if (relacion) {
-      res.json(relacion);
-    } else {
-      res.status(404).json({ message: 'Relación no encontrada' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const servicio = await Servicio.findByPk(req.params.id, {
+      include: [
+        {
+          model: Clase,
+          as: 'Clase',
+          attributes: ['nombre_clase', 'descripcion', 'precio_clase', 'imagen_url']
+        },
+        {
+          model: Entrenador,
+          as: 'Entrenador',
+          attributes: ['nombre_entrenador']
+        }
+      ]
+    });
+
+    if (!servicio) return res.status(404).json({ message: 'Servicio no encontrado' });
+
+    res.json({
+      servicio_id: servicio.clase_entrenador_id,
+      clase_id: servicio.clase_id,
+      entrenador_id: servicio.entrenador_id,
+      nombre_clase: servicio.Clase?.nombre_clase,
+      descripcion: servicio.Clase?.descripcion,
+      precio: servicio.Clase?.precio_clase,
+      imagen_url: servicio.Clase?.imagen_url,
+      nombre_entrenador: servicio.Entrenador?.nombre_entrenador
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el servicio', error });
   }
 };
 
-exports.createRelation = async (req, res) => {
+exports.create = async (req, res) => {
   try {
     const { clase_id, entrenador_id } = req.body;
-    if (!clase_id || !entrenador_id) {
-      return res.status(400).json({ error: 'clase_id y entrenador_id son obligatorios' });
-    }
-
-    const nuevaRelacion = await ClaseEntrenador.create({ clase_id, entrenador_id });
-    res.status(201).json(nuevaRelacion);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const nuevo = await Servicio.create({ clase_id, entrenador_id });
+    res.status(201).json(nuevo);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al crear el servicio', error });
   }
 };
 
-exports.updateRelation = async (req, res) => {
+exports.update = async (req, res) => {
   try {
-    const relacion = await ClaseEntrenador.findByPk(req.params.id);
-    if (relacion) {
-      await relacion.update(req.body);
-      res.json(relacion);
-    } else {
-      res.status(404).json({ message: 'Relación no encontrada' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { clase_id, entrenador_id } = req.body;
+    const servicio = await Servicio.findByPk(req.params.id);
+
+    if (!servicio) return res.status(404).json({ message: 'Servicio no encontrado' });
+
+    await servicio.update({ clase_id, entrenador_id });
+    res.json({ message: 'Servicio actualizado correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar el servicio', error });
   }
 };
 
-exports.deleteRelation = async (req, res) => {
+exports.delete = async (req, res) => {
   try {
-    const relacion = await ClaseEntrenador.findByPk(req.params.id);
-    if (relacion) {
-      await relacion.destroy();
-      res.json({ message: 'Relación eliminada correctamente' });
-    } else {
-      res.status(404).json({ message: 'Relación no encontrada' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const servicio = await Servicio.findByPk(req.params.id);
+    if (!servicio) return res.status(404).json({ message: 'Servicio no encontrado' });
+
+    await servicio.destroy();
+    res.json({ message: 'Servicio eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar el servicio', error });
   }
 };

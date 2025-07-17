@@ -1,60 +1,51 @@
-const Leads = require('../models/leandsModels');
+const Lead = require('../models/leandsModels');
 
-exports.getAll = async (req, res) => {
+exports.getAllLeads = async (req, res) => {
   try {
-    const leads = await Leads.findAll();
+    const leads = await Lead.findAll();
     res.json(leads);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener leads' });
   }
 };
 
-exports.getById = async (req, res) => {
+exports.getLeadById = async (req, res) => {
   try {
-    const lead = await Leads.findByPk(req.params.id);
-    if (lead) {
-      res.json(lead);
-    } else {
-      res.status(404).json({ message: 'Lead no encontrado' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const lead = await Lead.findByPk(req.params.id);
+    if (!lead) return res.status(404).json({ error: 'Lead no encontrado' });
+    res.json(lead);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener el lead' });
   }
 };
 
-exports.create = async (req, res) => {
+exports.createLead = async (req, res) => {
   try {
-    const nuevoLead = await Leads.create(req.body);
-    res.status(201).json(nuevoLead);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const newLead = await Lead.create(req.body);
+    res.status(201).json({ message: 'Lead creado', lead: newLead });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al crear el lead' });
   }
 };
 
-exports.update = async (req, res) => {
+exports.updateLead = async (req, res) => {
   try {
-    const lead = await Leads.findByPk(req.params.id);
-    if (lead) {
-      await lead.update(req.body);
-      res.json(lead);
-    } else {
-      res.status(404).json({ message: 'Lead no encontrado' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const [updated] = await Lead.update(req.body, {
+      where: { leads_id: req.params.id }
+    });
+    if (updated === 0) return res.status(404).json({ error: 'Lead no encontrado' });
+    res.json({ message: 'Lead actualizado' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar el lead' });
   }
 };
 
-exports.delete = async (req, res) => {
+exports.deleteLead = async (req, res) => {
   try {
-    const lead = await Leads.findByPk(req.params.id);
-    if (lead) {
-      await lead.destroy();
-      res.json({ message: 'Lead eliminado' });
-    } else {
-      res.status(404).json({ message: 'Lead no encontrado' });
-    }
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const deleted = await Lead.destroy({ where: { leads_id: req.params.id } });
+    if (deleted === 0) return res.status(404).json({ error: 'Lead no encontrado' });
+    res.json({ message: 'Lead eliminado' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar el lead' });
   }
 };

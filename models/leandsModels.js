@@ -1,27 +1,31 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
+const db = require('../config/db');
 
-const Leads = sequelize.define('Leads', {
+const Lead = db.define('leads', {
   leads_id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true,
+    primaryKey: true
   },
   nombre_autor: {
     type: DataTypes.STRING(100),
-    allowNull: false,
+    allowNull: false
+  },
+  email: {
+    type: DataTypes.STRING(100),
+    allowNull: false
   },
   mensaje: {
     type: DataTypes.TEXT,
-    allowNull: false,
+    allowNull: false
   },
   fecha_envio: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
-  },
+    allowNull: false
+  }
 }, {
-  tableName: 'leads',
-  timestamps: false,  // Desactiva createdAt/updatedAt
+  timestamps: false,
+  tableName: 'leads'
 });
 
-module.exports = Leads;
+module.exports = Lead;
