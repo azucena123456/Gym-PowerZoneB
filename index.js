@@ -25,6 +25,8 @@ app.use('/api/horarios', require('./routes/scheludesRoutes'));
 app.use('/api/leads', require('./routes/leandsRoutes'));
 app.use('/api/membresias', require('./routes/memberRoutes'));
 app.use('/api/clase_entrenador', require('./routes/serviceRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'))
+app.use('/api/usuarios', require('./routes/usuarioRoutes'));
 
 app.get('/', (req, res) => {
   res.send('Backend Gym PowerZone funcionando');
