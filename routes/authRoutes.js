@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, me } = require('../controllers/authController');
+const {
+  register,
+  login,
+  me,
+  solicitarRecuperacion,
+  restablecerContrasena
+} = require('../controllers/authController');
 const verificarToken = require('../middlewares/authMiddleware');
-const Usuario = require('../models/usuarioModel')
+const Usuario = require('../models/usuarioModel');
 
 router.post('/register', register);
 router.post('/login', login);
@@ -23,4 +29,8 @@ router.get('/me', verificarToken, async (req, res) => {
   }
 });
 
+router.post('/recuperar-password', solicitarRecuperacion);
+router.post('/restablecer-password', restablecerContrasena);
+
 module.exports = router;
+
