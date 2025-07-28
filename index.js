@@ -29,10 +29,11 @@ app.use('/api/auth', require('./routes/authRoutes'))
 app.use('/api/usuarios', require('./routes/usuarioRoutes'));
 app.use('/api/categorias', require('./routes/categoriaRoutes'));
 app.use('/api/productos', require('./routes/productoRoutes'));
-app.use('/api/carritos', require('./routes/carritoRoutes'));Ñ
+app.use('/api/carritos', require('./routes/carritoRoutes'));
+app.use('/api/pedidos', require('./routes/pedidoRoutes'));
 
 app.get('/', (req, res) => {
-  res.send('Backend Gym PowerZone funcionando');
+  res.send('Backend GYM PowerZone funcionando');
 });
 
 app.use((req, res) => {
