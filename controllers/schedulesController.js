@@ -45,6 +45,23 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.patch = async (req, res) => {
+  try {
+    const horario = await Horario.findByPk(req.params.id);
+
+    if (!horario) {
+      return res.status(404).json({ message: 'Horario no encontrado' });
+    }
+
+    await horario.update(req.body);
+
+    res.json({ message: 'Horario actualizado parcialmente', horario });
+  } catch (err) {
+    console.error('Error en PATCH Horario:', err.message);
+    res.status(500).json({ message: 'Error al actualizar parcialmente el horario', error: err.message });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const horario = await Horario.findByPk(req.params.id);

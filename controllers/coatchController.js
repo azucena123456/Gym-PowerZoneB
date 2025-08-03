@@ -45,6 +45,20 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.modificarParcial = async (req, res) => {
+  try {
+    const entrenador = await Entrenador.findByPk(req.params.id);
+    if (!entrenador) {
+      return res.status(404).json({ message: 'Entrenador no encontrado' });
+    }
+
+    await entrenador.update(req.body);
+    res.json({ message: 'Entrenador actualizado parcialmente', entrenador });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al realizar la actualización parcial', detalle: err.message });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const entrenador = await Entrenador.findByPk(req.params.id);

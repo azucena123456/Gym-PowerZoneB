@@ -28,6 +28,23 @@ exports.createLead = async (req, res) => {
   }
 };
 
+exports.patchLead = async (req, res) => {
+  try {
+    const lead = await Lead.findByPk(req.params.id);
+
+    if (!lead) {
+      return res.status(404).json({ error: 'Lead no encontrado' });
+    }
+
+    await lead.update(req.body);
+
+    res.json({ message: 'Lead actualizado parcialmente', lead });
+  } catch (error) {
+    console.error('Error en PATCH Lead:', error.message);
+    res.status(500).json({ error: 'Error al actualizar parcialmente el lead' });
+  }
+};
+
 exports.updateLead = async (req, res) => {
   try {
     const [updated] = await Lead.update(req.body, {

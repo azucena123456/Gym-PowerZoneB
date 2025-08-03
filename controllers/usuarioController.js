@@ -50,6 +50,26 @@ const actualizarUsuario = async (req, res) => {
   }
 };
 
+const patchUsuario = async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.params.id);
+
+    if (!usuario) {
+      return res.status(404).json({ mensaje: 'Usuario no encontrado' });
+    }
+
+    await usuario.update(req.body);
+
+    const usuarioActualizado = await Usuario.findByPk(req.params.id, {
+      attributes: { exclude: ['password_hash'] }
+    });
+
+    res.json({ mensaje: 'Usuario actualizado parcialmente', usuario: usuarioActualizado });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al actualizar parcialmente el usuario' });
+  }
+};
+
 // Eliminar un usuario
 const eliminarUsuario = async (req, res) => {
   try {
@@ -71,5 +91,6 @@ module.exports = {
   obtenerUsuarios,
   obtenerUsuarioPorId,
   actualizarUsuario,
+  patchUsuario,
   eliminarUsuario
 };

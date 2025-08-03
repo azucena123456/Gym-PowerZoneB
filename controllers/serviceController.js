@@ -94,6 +94,23 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.patch = async (req, res) => {
+  try {
+    const servicio = await Servicio.findByPk(req.params.id);
+
+    if (!servicio) {
+      return res.status(404).json({ message: 'Servicio no encontrado' });
+    }
+
+    await servicio.update(req.body);
+
+    res.json({ message: 'Servicio actualizado parcialmente', servicio });
+  } catch (error) {
+    console.error('Error en PATCH Servicio:', error.message);
+    res.status(500).json({ message: 'Error al actualizar parcialmente el servicio', error });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const servicio = await Servicio.findByPk(req.params.id);

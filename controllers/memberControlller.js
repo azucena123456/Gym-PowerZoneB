@@ -45,6 +45,23 @@ exports.update = async (req, res) => {
   }
 };
 
+exports.patch = async (req, res) => {
+  try {
+    const membresia = await Membresia.findByPk(req.params.id);
+
+    if (!membresia) {
+      return res.status(404).json({ message: 'Membresía no encontrada' });
+    }
+
+    await membresia.update(req.body);
+
+    res.json({ message: 'Membresía actualizada parcialmente', membresia });
+  } catch (err) {
+    console.error('Error en PATCH Membresía:', err.message);
+    res.status(500).json({ error: 'Error al actualizar parcialmente la membresía' });
+  }
+};
+
 exports.delete = async (req, res) => {
   try {
     const membresia = await Membresia.findByPk(req.params.id);
